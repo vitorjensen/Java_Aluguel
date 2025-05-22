@@ -39,6 +39,11 @@ public class Inicial extends javax.swing.JFrame {
         jPanel1.setForeground(new java.awt.Color(255, 255, 255));
 
         jButton1.setLabel("Cadastro de Cliente");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setLabel("Cadastro de Aluguel");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -124,6 +129,15 @@ public class Inicial extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    //Função do botão para navegar para a página de cliente
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+       //Instanciando a tela de cliente para ser reconhecida
+       Cliente cliente = new Cliente();
+       cliente.setVisible(true); //Define TRUE para a tela de cliente ser exibida
+       this.dispose(); //Fecha a tela atual para ao abrir um nova
+     
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
