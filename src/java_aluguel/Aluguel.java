@@ -3,20 +3,76 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package java_aluguel;
-
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java_aluguel.controllers.TbAluguelJpaController;
+import java_aluguel.entities.TbAluguel;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author vitor
  */
 public class Aluguel extends javax.swing.JFrame {
-
+//Fazendo a conexão com o banco via JPA
+    EntityManagerFactory factory = Persistence.createEntityManagerFactory("Java_AluguelPU2");
+    TbAluguelJpaController controller = new TbAluguelJpaController(factory);
     /**
      * Creates new form Aluguel
      */
     public Aluguel() {
         initComponents();
+        abrirConexao();
+        atualizarTabela();
     }
 
+    
+//Abrindo a conexão e fazendo o tratamento de erro caso não ocorra a conexão
+private void abrirConexao()
+{
+    try{
+        controller = new TbAluguelJpaController(factory);
+    }catch(Exception e)
+    {
+        JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+}
+}
+ //novo código de atualizarTabela() para puxar os dados do banco utilizando o JPA
+public void atualizarTabela()
+{
+     ((DefaultTableModel) jTable1.getModel()).setRowCount(0);
+     try{
+         List<TbAluguel> alugueis = controller.findTbAluguelEntities();
+         for(TbAluguel aluguel : alugueis)
+         {
+             String linha[] = {
+             String.valueOf(aluguel.getAluCodigo()),
+             aluguel.getCliCodigo(),
+             String.valueOf(aluguel.getAluDataInicial()),
+             String.valueOf(aluguel.getAluDataFinal()),
+             String.valueOf(aluguel.getProCodigo()),
+             String.valueOf(aluguel.getAluValor()),
+             String.valueOf(aluguel.getAluValorSinal()),
+             String.valueOf(aluguel.getAluRestaPagar()),
+             String.valueOf(aluguel.getAluPagoTotal()),
+             aluguel.getAluTipoPagamento(),
+             aluguel.getVenNome(),
+             aluguel.getAluObservacao(),
+             aluguel.getAluStatus(),
+             String.valueOf(aluguel.getAluQtde())
+         };
+          ((DefaultTableModel) jTable1.getModel()).addRow(linha);
+         }
+     }catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+        }
+}
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
