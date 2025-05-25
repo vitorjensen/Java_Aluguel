@@ -94,4 +94,15 @@ public class TbClienteJpaController {
             }
         }
     }
+    //Função para trazer o relacionamento entre TbAluguel e TbCliente (Nome, telefone, cpf...)
+    public TbCliente findTbCliente(int id)
+    {
+        EntityManager em = getEntityManager();
+        try
+        {
+            return em.find(TbCliente.class, id);
+        }finally{
+            em.close();
+        }
+    }
 }
