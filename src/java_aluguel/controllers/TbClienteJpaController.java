@@ -10,7 +10,7 @@ import javax.persistence.criteria.CriteriaQuery;
 public class TbClienteJpaController {
 
     private EntityManagerFactory emf = null;
-
+        
     public TbClienteJpaController(EntityManagerFactory factory) {
         this.emf = factory;
     }
