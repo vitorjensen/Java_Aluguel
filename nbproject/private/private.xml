@@ -5,6 +5,8 @@
         <group>
             <file>file:/C:/Users/vitor/OneDrive/Documentos/NetBeansProjects/Java_Aluguel/src/java_aluguel/Aluguel.java</file>
             <file>file:/C:/Users/vitor/OneDrive/Documentos/NetBeansProjects/Java_Aluguel/src/java_aluguel/Cliente.java</file>
+            <file>file:/C:/Users/vitor/OneDrive/Documentos/NetBeansProjects/Java_Aluguel/src/java_aluguel/controllers/TbClienteJpaController.java</file>
+            <file>file:/C:/Users/vitor/OneDrive/Documentos/NetBeansProjects/Java_Aluguel/src/java_aluguel/controllers/TbProdutoJpaController.java</file>
         </group>
     </open-files>
 </project-private>
