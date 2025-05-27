@@ -359,7 +359,7 @@ public class Cliente extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+//Função para o botão de DELETE
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
       String cliCodigo = jTextField1.getText();  //Instanciar um novo objeto ID do tipo String para realizar a exclusão diretamente pelo código
        try{

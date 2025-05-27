@@ -50,7 +50,7 @@ public class TbAluguel implements Serializable {
     @Column(name = "alu_codigo")
     private Integer aluCodigo;
     @Column(name = "cli_codigo")
-    private String cliCodigo;
+    private Integer cliCodigo;
     @Basic(optional = false)
     @Column(name = "alu_data_inicial")
     @Temporal(TemporalType.DATE)
@@ -104,11 +104,11 @@ public class TbAluguel implements Serializable {
         this.aluCodigo = aluCodigo;
     }
 
-    public String getCliCodigo() {
+    public Integer getCliCodigo() {
         return cliCodigo;
     }
 
-    public void setCliCodigo(String cliCodigo) {
+    public void setCliCodigo(Integer cliCodigo) {
         this.cliCodigo = cliCodigo;
     }
 

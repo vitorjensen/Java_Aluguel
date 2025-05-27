@@ -38,4 +38,29 @@ public class TbAluguelJpaController implements Serializable {
             em.close();
         }
      }
+     //Função para INSERT na base de dados de aluguel
+     public void create(TbAluguel aluguel)
+     {
+         EntityManager em = null;
+         try
+         {
+             em = getEntityManager();
+             em.getTransaction().begin();
+             em.persist(aluguel);
+             em.getTransaction().commit();
+         }catch(Exception ex){
+             if(em != null && em.getTransaction().isActive())
+             {
+                 em.getTransaction().rollback();
+             }
+             throw ex;
+         }finally
+         {
+             if(em != null)
+             {
+                 em.close();
+             }
+         }
+         
+     }
 }

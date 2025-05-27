@@ -6,6 +6,7 @@ package java_aluguel;
 //import java.sql.DriverManager;
 //import java.sql.ResultSet;
 //import java.sql.SQLException;
+import java.math.BigDecimal;
 import java.util.List;
 import java_aluguel.controllers.TbAluguelJpaController;
 import java_aluguel.controllers.TbClienteJpaController;
@@ -21,7 +22,7 @@ import javax.swing.table.DefaultTableModel;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.text.NumberFormat;
-import java_aluguel.controllers.TbVendaJpaController;
+import java.util.Date;
 import java_aluguel.controllers.TbVendedorJpaController;
 
 
@@ -43,10 +44,11 @@ public class Aluguel extends javax.swing.JFrame {
         initComponents();
         abrirConexao();
         atualizarTabela();
-        carregarCliente();
+        limpar();
     }
 
-    
+   
+
 //Abrindo a conexão e fazendo o tratamento de erro caso não ocorra a conexão
 private void abrirConexao()
 {
@@ -57,6 +59,22 @@ private void abrirConexao()
         JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
 }
 }
+
+   private void limpar()
+    {
+        jTextField1.setText("");
+        jTextField19.setText("");
+        jTextField6.setText("");
+        jTextField7.setText("");
+        jTextField8.setText("");
+        jTextField13.setText("");
+        atualizarTabela();
+         jButton1.setEnabled(true);
+        jButton2.setEnabled(false);
+        jButton3.setEnabled(false);
+        jButton4.setEnabled(true);
+        JComboBox1.requestFocus();
+    }
  //novo código de atualizarTabela() para puxar os dados do banco utilizando o JPA
 public void atualizarTabela()
 {
@@ -72,7 +90,7 @@ public void atualizarTabela()
        
          for(TbAluguel aluguel : alugueis)
          {
-         TbCliente cliente = clienteController.findTbCliente(Integer.parseInt(aluguel.getCliCodigo()));
+         TbCliente cliente = clienteController.findTbCliente(aluguel.getCliCodigo());
          TbProduto produto = produtoController.findTbProduto(aluguel.getProCodigo());
              String linha[] = {
              String.valueOf(aluguel.getAluCodigo()),
@@ -100,6 +118,7 @@ public void atualizarTabela()
             JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
         }
 }
+
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -210,6 +229,8 @@ public void atualizarTabela()
 
         jLabel7.setText("Valor sinal:");
 
+        jTextField8.setEnabled(false);
+
         jLabel8.setText("Resta pagar:");
 
         jLabel10.setText("Pago total:");
@@ -234,6 +255,11 @@ public void atualizarTabela()
         jButton3.setText("Remover");
 
         jButton4.setText("Limpar");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel16.setText("Clique duas vezes no cadastro do alugel para editar suas informações");
@@ -479,9 +505,59 @@ public void atualizarTabela()
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+//Função para realizar o INSERT de informações
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        //Função para realizar o INSERT de informações
-        //Parei aqui!!!!!
+        
+       try{
+           //Obtendo o CLIENTE selecionado
+           ClienteComboBox clienteItem = (ClienteComboBox) JComboBox1.getSelectedItem();
+           int clienteID = clienteItem.getCodigo();
+           
+           //Obtendo o PRODUTO selecionado
+           ProdutoComboBox produtoItem = (ProdutoComboBox) jComboBox3.getSelectedItem();
+           int produtoID = produtoItem.getCodigo();
+           
+           //Obtendo o VENDEDOR selecionado
+           String vendedorNome = jComboBox2.getSelectedItem().toString();
+           
+           //Obtendo as DATAS selecionadas
+           Date dataInicio = jDateChooser1.getDate();
+           Date dataFinal = jDateChooser2.getDate();
+           
+           //Obtendo os campos de valores NUMÉRICOS
+           int quantidade = Integer.parseInt(jTextField19.getText());
+           BigDecimal valor = new BigDecimal(jTextField6.getText().replace(",", "."));
+           BigDecimal valorSinal = new BigDecimal(jTextField7.getText().replace(",", "."));
+           BigDecimal restaPagar = valor.subtract(valorSinal);
+           String pagoTotal = jComboBox6.getSelectedItem().toString();
+           String tipoPagamento = jComboBox5.getSelectedItem().toString();
+           String observacao = jTextField13.getText();
+           String status = jComboBox4.getSelectedItem().toString();
+          
+           //Construindo Aluguel
+           TbAluguel aluguel = new TbAluguel();
+           aluguel.setCliCodigo(clienteItem.getCodigo());
+           aluguel.setProCodigo(produtoItem.getCodigo());
+           aluguel.setAluDataInicial(dataInicio);
+           aluguel.setAluDataFinal(dataFinal);
+           aluguel.setAluQtde(quantidade);
+           aluguel.setAluValor(valor);
+           aluguel.setAluValorSinal(valorSinal);
+           aluguel.setAluRestaPagar(restaPagar);
+           aluguel.setAluPagoTotal(pagoTotal);
+           aluguel.setAluTipoPagamento(tipoPagamento);
+           aluguel.setAluObservacao(observacao);
+           aluguel.setVenNome(vendedorNome);
+           aluguel.setAluStatus(status);
+          
+           //Salvar os dados no banco
+          controller.create(aluguel);
+          limpar();
+          JOptionPane.showMessageDialog(this, "Aluguel salvo com sucesso!");
+       }catch(Exception e)
+       {
+           JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+       }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
@@ -496,6 +572,10 @@ public void atualizarTabela()
      carregarVendedor();
      carregarProduto();
     }//GEN-LAST:event_formWindowOpened
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        limpar();
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     
 //Função para carregar os clientes no input de Nome usando a classe auxiliar
