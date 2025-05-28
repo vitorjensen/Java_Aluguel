@@ -36,6 +36,15 @@ public class TbProdutoJpaController {
          }
      }
      
+     public TbProduto findProduto(int id) {
+    EntityManager em = getEntityManager();
+    try {
+        return em.find(TbProduto.class, id);
+    } finally {
+        em.close();
+    }
+     }
+     
      //Função para trazer o relacionamento entre TbAluguel e TbProduto (ID, Descrição...)
       public TbProduto findTbProduto(int id)
     {

@@ -41,11 +41,13 @@ public class Aluguel extends javax.swing.JFrame {
     /**
      * Creates new form Aluguel
      */
+     
     public Aluguel() {
         initComponents();
         abrirConexao();
         atualizarTabela();
         limpar();
+       
     }
 
    
@@ -274,6 +276,11 @@ public void atualizarTabela()
         });
 
         jButton2.setText("Editar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Remover");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -339,6 +346,12 @@ public void atualizarTabela()
         jButton7.setText("Buscar");
 
         jLabel22.setText("Quantidade:");
+
+        jComboBox3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox3ActionPerformed(evt);
+            }
+        });
 
         jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "LOCADO", "RESERVADO" }));
 
@@ -418,7 +431,6 @@ public void atualizarTabela()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(141, 141, 141)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -450,7 +462,7 @@ public void atualizarTabela()
                             .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(162, Short.MAX_VALUE))
+                .addContainerGap(174, Short.MAX_VALUE))
             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(
@@ -571,7 +583,11 @@ public void atualizarTabela()
            String tipoPagamento = jComboBox5.getSelectedItem().toString();
            String observacao = jTextField13.getText();
            String status = jComboBox4.getSelectedItem().toString();
-          
+          /*if(clienteItem.equals("") || dataInicio.equals("") || dataFinal.equals("") || produtoItem.equals("") || quantidade.equals("") ||
+                  valor.equals("") || valorSinal.equals("") || restaPagar.equals("") || pagoTotal.equals("") || tipoPagamento.equals("") || observacao.equals("") ||
+                  vendedoNome.equals("") || status.equals("")){
+              throw new Exception("Preeencha todos os campos!");
+          }*/
            //Construindo Aluguel
            TbAluguel aluguel = new TbAluguel();
            aluguel.setCliCodigo(clienteItem.getCodigo());
@@ -806,6 +822,79 @@ public void atualizarTabela()
        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
+/*#################################################################################################################### */
+    
+    //Função para EDITAR as informações
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    try{
+            int aluguelID = Integer.parseInt(jTextField1.getText());
+            
+            // Buscar o aluguel existente
+             TbAluguel aluguel = controller.findAluguel(aluguelID);
+             if(aluguel == null){
+                 throw new Exception("Aluguel com ID: " + aluguelID + " não encontrado.");
+             }
+           //Obtendo o CLIENTE selecionado
+           ClienteComboBox clienteItem = (ClienteComboBox) JComboBox1.getSelectedItem();
+           int clienteID = clienteItem.getCodigo();
+           
+           //Obtendo o PRODUTO selecionado
+           ProdutoComboBox produtoItem = (ProdutoComboBox) jComboBox3.getSelectedItem();
+           int produtoID = produtoItem.getCodigo();
+           
+           //Obtendo o VENDEDOR selecionado
+           String vendedorNome = jComboBox2.getSelectedItem().toString();
+           
+           //Obtendo as DATAS selecionadas
+           Date dataInicio = jDateChooser1.getDate();
+           Date dataFinal = jDateChooser2.getDate();
+           
+           
+           //Obtendo os campos de valores NUMÉRICOS
+           int quantidade = Integer.parseInt(jTextField19.getText());
+           BigDecimal valor = new BigDecimal(jTextField6.getText().replace(",", "."));
+           BigDecimal valorSinal = new BigDecimal(jTextField7.getText().replace(",", "."));
+           BigDecimal restaPagar = valor.subtract(valorSinal);
+           String pagoTotal = jComboBox6.getSelectedItem().toString();
+           String tipoPagamento = jComboBox5.getSelectedItem().toString();
+           String observacao = jTextField13.getText();
+           String status = jComboBox4.getSelectedItem().toString();
+          /*if(clienteItem.equals("") || dataInicio.equals("") || dataFinal.equals("") || produtoItem.equals("") || quantidade.equals("") ||
+                  valor.equals("") || valorSinal.equals("") || restaPagar.equals("") || pagoTotal.equals("") || tipoPagamento.equals("") || observacao.equals("") ||
+                  vendedoNome.equals("") || status.equals("")){
+              throw new Exception("Preeencha todos os campos!");
+          }*/
+           //Construindo Aluguel
+          
+           aluguel.setCliCodigo(clienteItem.getCodigo());
+           aluguel.setProCodigo(produtoItem.getCodigo());
+           aluguel.setAluDataInicial(dataInicio);
+           aluguel.setAluDataFinal(dataFinal);
+           aluguel.setAluQtde(quantidade);
+           aluguel.setAluValor(valor);
+           aluguel.setAluValorSinal(valorSinal);
+           aluguel.setAluRestaPagar(restaPagar);
+           aluguel.setAluPagoTotal(pagoTotal);
+           aluguel.setAluTipoPagamento(tipoPagamento);
+           aluguel.setAluObservacao(observacao);
+           aluguel.setVenNome(vendedorNome);
+           aluguel.setAluStatus(status);
+          
+           //Salvar os dados no banco
+          controller.edit(aluguel);
+          limpar();
+          JOptionPane.showMessageDialog(this, "Aluguel salvo com sucesso!");
+       }catch(Exception e)
+       {
+           JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+       }
+       
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
+        
+     
+    }//GEN-LAST:event_jComboBox3ActionPerformed
 /*#################################################################################################################### */  
     
 //Função para carregar os clientes no input de Nome usando a classe auxiliar

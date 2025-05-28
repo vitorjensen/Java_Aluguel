@@ -64,6 +64,31 @@ public class TbAluguelJpaController implements Serializable {
          
      }
      
+     //Função Edit dentro da controller para passar para view
+     public void edit(TbAluguel aluguel) throws Exception{
+         EntityManager em = getEntityManager();
+         try{
+             em.getTransaction().begin();
+             aluguel = em.merge(aluguel);
+             em.getTransaction().commit();
+         }catch(Exception ex)
+         {
+             em.getTransaction().rollback();
+             throw new Exception("Erro ao utilizar o aluguel: " + ex.getMessage());
+         }finally{
+             em.close(); 
+         }
+         
+     }
+     
+    public TbAluguel findAluguel(int id) {
+    EntityManager em = getEntityManager();
+    try {
+        return em.find(TbAluguel.class, id);
+    } finally {
+        em.close();
+    }
+}
      public void destroy(Integer AluCodigo) throws Exception
      {
          EntityManager em = null;
