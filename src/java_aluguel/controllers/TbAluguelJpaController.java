@@ -63,4 +63,27 @@ public class TbAluguelJpaController implements Serializable {
          }
          
      }
+     
+     public void destroy(Integer AluCodigo) throws Exception
+     {
+         EntityManager em = null;
+         try{
+              em = getEntityManager();
+            em.getTransaction().begin();
+            TbAluguel aluguel;
+            try{
+                aluguel = em.getReference(TbAluguel.class, AluCodigo);
+                aluguel.getAluCodigo();
+            }catch (EntityNotFoundException enfe){
+                throw new Exception("Aluguel com ID: " + AluCodigo + " não encontrado.", enfe);
+         }
+             em.remove(aluguel);
+            em.getTransaction().commit();
+     }finally{
+             if(em != null)
+            {
+                em.close();
+            }
+         }
+     }
 }
