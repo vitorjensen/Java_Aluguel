@@ -25,6 +25,9 @@ import java.text.NumberFormat;
 import java.util.Date;
 import java.text.ParseException;
 import java_aluguel.controllers.TbVendedorJpaController;
+import javax.swing.ImageIcon;
+import java.awt.Image;
+import java.io.File;
 
 
 
@@ -38,12 +41,16 @@ public class Aluguel extends javax.swing.JFrame {
 //Fazendo a conexão com o banco via JPA
     EntityManagerFactory factory = Persistence.createEntityManagerFactory("Java_AluguelPU2");
     TbAluguelJpaController controller = new TbAluguelJpaController(factory);
+    private EntityManagerFactory emf;
+    private TbProdutoJpaController produtoController;
     /**
      * Creates new form Aluguel
      */
      
     public Aluguel() {
         initComponents();
+         emf = Persistence.createEntityManagerFactory("Java_AluguelPU2"); // Substitua "SeuPU" pelo nome correto do persistence.xml
+        produtoController = new TbProdutoJpaController(emf);
         abrirConexao();
         atualizarTabela();
         limpar();
@@ -250,7 +257,9 @@ public void atualizarTabela()
 
         jLabel5.setText("Produto ID:");
 
-        jLabel6.setText("Valor:");
+        jTextField6.setEnabled(false);
+
+        jLabel6.setText("Valor do produto:");
 
         jLabel7.setText("Valor sinal:");
 
@@ -577,8 +586,9 @@ public void atualizarTabela()
            //Obtendo os campos de valores NUMÉRICOS
            int quantidade = Integer.parseInt(jTextField19.getText());
            BigDecimal valor = new BigDecimal(jTextField6.getText().replace(",", "."));
+           BigDecimal valorTotal = valor.multiply(BigDecimal.valueOf(quantidade));
            BigDecimal valorSinal = new BigDecimal(jTextField7.getText().replace(",", "."));
-           BigDecimal restaPagar = valor.subtract(valorSinal);
+           BigDecimal restaPagar = valorTotal.subtract(valorSinal);
            String pagoTotal = jComboBox6.getSelectedItem().toString();
            String tipoPagamento = jComboBox5.getSelectedItem().toString();
            String observacao = jTextField13.getText();
@@ -595,7 +605,7 @@ public void atualizarTabela()
            aluguel.setAluDataInicial(dataInicio);
            aluguel.setAluDataFinal(dataFinal);
            aluguel.setAluQtde(quantidade);
-           aluguel.setAluValor(valor);
+           aluguel.setAluValor(valorTotal);
            aluguel.setAluValorSinal(valorSinal);
            aluguel.setAluRestaPagar(restaPagar);
            aluguel.setAluPagoTotal(pagoTotal);
@@ -702,6 +712,42 @@ public void atualizarTabela()
             //Pega o texto do select de status através do duplo clique na jTable
             String status = jTable1.getValueAt(i, 16).toString();
             jComboBox4.setSelectedItem(status);
+            
+            
+            //Carregando a foto do produto com o duplo clique  na jTable
+            ProdutoComboBox produtoItem = (ProdutoComboBox) jComboBox3.getSelectedItem();
+            int produtoID = produtoItem.getCodigo();
+            
+            TbProduto produto = produtoController.findProduto(produtoID);
+            
+            if(produto != null && produto.getProFoto() != null)
+            {
+                
+                String imagemNome = produto.getProFoto();
+                if(imagemNome.startsWith("fotos/"))
+                {
+                    imagemNome = imagemNome.substring(6);
+                }
+                 String caminhoImagem = "fotos/" + imagemNome;
+                 
+                 File imagemArquivo = new File(caminhoImagem);
+                 
+                 if(imagemArquivo.exists()){
+                     ImageIcon icon = new ImageIcon(caminhoImagem);
+                         Image imagem = icon.getImage().getScaledInstance(
+            jLabel17.getWidth(),
+            jLabel17.getHeight(),
+            Image.SCALE_SMOOTH
+           );
+            jLabel17.setIcon(new ImageIcon(imagem));
+                 }else{
+                     jLabel17.setIcon(null);
+                     System.err.println("Imagem não encontrada: " + imagemArquivo.getAbsolutePath());
+                 }
+            }else{
+               jLabel17.setIcon(null);
+               System.err.println("Produto ou imagem não encontrados");
+            }
             
             jButton1.setEnabled(false);
             jButton2.setEnabled(true);
@@ -853,8 +899,9 @@ public void atualizarTabela()
            //Obtendo os campos de valores NUMÉRICOS
            int quantidade = Integer.parseInt(jTextField19.getText());
            BigDecimal valor = new BigDecimal(jTextField6.getText().replace(",", "."));
+           BigDecimal valorTotal = valor.multiply(BigDecimal.valueOf(quantidade));
            BigDecimal valorSinal = new BigDecimal(jTextField7.getText().replace(",", "."));
-           BigDecimal restaPagar = valor.subtract(valorSinal);
+           BigDecimal restaPagar = valorTotal.subtract(valorSinal);
            String pagoTotal = jComboBox6.getSelectedItem().toString();
            String tipoPagamento = jComboBox5.getSelectedItem().toString();
            String observacao = jTextField13.getText();
@@ -871,7 +918,7 @@ public void atualizarTabela()
            aluguel.setAluDataInicial(dataInicio);
            aluguel.setAluDataFinal(dataFinal);
            aluguel.setAluQtde(quantidade);
-           aluguel.setAluValor(valor);
+           aluguel.setAluValor(valorTotal);
            aluguel.setAluValorSinal(valorSinal);
            aluguel.setAluRestaPagar(restaPagar);
            aluguel.setAluPagoTotal(pagoTotal);
@@ -890,10 +937,23 @@ public void atualizarTabela()
        }
        
     }//GEN-LAST:event_jButton2ActionPerformed
-
+/*#################################################################################################################### */  
+    
+    //Função para mostrar o valor real do produto ao ser selecionando pela combobox
     private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
-        
-     
+        try {
+        ProdutoComboBox produtoSelecionado = (ProdutoComboBox) jComboBox3.getSelectedItem();
+        if (produtoSelecionado != null) {
+            TbProduto produto = produtoController.findProduto(produtoSelecionado.getCodigo());
+            if (produto != null) {
+                jTextField6.setText(produto.getProValor().toString());
+                // Se quiser formatar para R$:
+                // jTextField6.setText("R$ " + String.format("%.2f", produto.getProValor()));
+            }
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Erro ao buscar produto: " + e.getMessage());
+    }
     }//GEN-LAST:event_jComboBox3ActionPerformed
 /*#################################################################################################################### */  
     

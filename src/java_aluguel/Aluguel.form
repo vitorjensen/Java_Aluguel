@@ -422,10 +422,13 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField6">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Valor:"/>
+        <Property name="text" type="java.lang.String" value="Valor do produto:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField7">
