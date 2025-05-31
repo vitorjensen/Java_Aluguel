@@ -3,11 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package java_aluguel.controllers;
+import java.util.Date;
 import java.util.List;
 import java_aluguel.entities.TbProduto;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
+import static javax.swing.UIManager.get;
 
 /**
  *
@@ -56,4 +59,31 @@ public class TbProdutoJpaController {
             em.close();
         }
     }
+      public List<Object[]> buscarEntreDatas(Date dataInicio, Date dataFinal)
+      {
+       EntityManager em = getEntityManager();
+       try{
+           String sql = "SELECT p.pro_codigo, p.pro_foto, p.pro_descricao, p.pro_qtde, a.qtde_locado " +
+                   "FROM tb_produto p " +
+                   "INNER JOIN (" +
+                   " SELECT al.pro_codigo, SUM(al.alu_qtde) AS qtde_locado " +
+                   " FROM tb_aluguel al " +
+                   " WHERE al.alu_status <> 'RESERVADO' " +
+                   " AND ( " +
+                   "        (al.alu_data_inicial BETWEEN ?1 AND ?2) " +
+                   " OR " +
+                   "  (al.alu_data_inicial > al.alu_data_final AND al.alu_data_final BETWEEN ?1 AND ?2) " +
+                    "     ) " +
+                    "   GROUP BY al.pro_codigo " +
+                   ") a ON a.pro_codigo = p.pro_codigo";
+           Query query  = em.createNativeQuery(sql);
+           query.setParameter(1, dataInicio);
+           query.setParameter(2, dataFinal);
+           
+           return query.getResultList();
+           
+       }finally{
+           em.close();
+       }
+      }
 }

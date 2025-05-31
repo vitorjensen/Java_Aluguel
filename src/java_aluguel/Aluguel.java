@@ -335,24 +335,43 @@ public void atualizarTabela()
                 {null, null, null, null, null}
             },
             new String [] {
-                "ID:", "Foto", "Descrição:", "Qtde em estoque:", "Qtde locado:"
+                "ID do produto:", "Foto", "Descrição do produto:", "Quantidade em estoque:", "Quantidade locados:"
             }
         ) {
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
         jScrollPane2.setViewportView(jTable2);
+        if (jTable2.getColumnModel().getColumnCount() > 0) {
+            jTable2.getColumnModel().getColumn(0).setResizable(false);
+            jTable2.getColumnModel().getColumn(1).setResizable(false);
+            jTable2.getColumnModel().getColumn(2).setResizable(false);
+            jTable2.getColumnModel().getColumn(3).setResizable(false);
+            jTable2.getColumnModel().getColumn(4).setResizable(false);
+        }
 
         jLabel20.setText("Data inicial:");
 
         jLabel21.setText("Data final:");
 
         jButton7.setText("Buscar");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         jLabel22.setText("Quantidade:");
 
@@ -955,6 +974,52 @@ public void atualizarTabela()
         JOptionPane.showMessageDialog(this, "Erro ao buscar produto: " + e.getMessage());
     }
     }//GEN-LAST:event_jComboBox3ActionPerformed
+
+    private void atualizarTabelaEntreDatas(List<Object[]> resultados)
+    {
+        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+        model.setRowCount(0);
+        
+        for(Object[] row : resultados)
+        {
+            Integer proCodigo = (Integer) row[0];
+            String proFoto = (String) row[1];
+            String proDescricao = (String) row[2];
+            Integer proQtde = (Integer) row[3];
+            BigDecimal qtdeLocado = (BigDecimal) row[4];
+            
+            //Convertendo o camino relativo da foto para imagem
+            ImageIcon imagem = new ImageIcon(proFoto);
+            Image img = imagem.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
+            ImageIcon imagemRedimensionada = new ImageIcon(img);
+            
+            model.addRow(new Object[]{
+               proCodigo,
+                imagemRedimensionada,
+                proDescricao,
+                proQtde,
+                qtdeLocado
+            });
+        }
+    }
+    
+ /*#################################################################################################################### */ 
+    
+    //Função para realizar a busca por duas datas INICIAL E FINAL
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        try{
+            Date dataInicio = jDateChooser3.getDate();
+            Date dataFinal = jDateChooser4.getDate();
+            //System.out.println("Data Início: " + dataInicio);
+            //System.out.println("Data Final: " + dataFinal);
+            //Chamada do método na controller
+            List<Object[]> resultados = produtoController.buscarEntreDatas(dataInicio, dataFinal);
+            //System.out.println("Total de linhas retornadas: " + resultados.size());
+            atualizarTabelaEntreDatas(resultados);
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(this, "Erro ao buscar produtos: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton7ActionPerformed
 /*#################################################################################################################### */  
     
 //Função para carregar os clientes no input de Nome usando a classe auxiliar
