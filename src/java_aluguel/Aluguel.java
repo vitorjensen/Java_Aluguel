@@ -6,6 +6,7 @@ package java_aluguel;
 //import java.sql.DriverManager;
 //import java.sql.ResultSet;
 //import java.sql.SQLException;
+import java.awt.Component;
 import java.math.BigDecimal;
 import java.util.List;
 import java_aluguel.controllers.TbAluguelJpaController;
@@ -28,6 +29,11 @@ import java_aluguel.controllers.TbVendedorJpaController;
 import javax.swing.ImageIcon;
 import java.awt.Image;
 import java.io.File;
+import java.util.Calendar;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 
 
 
@@ -990,6 +996,7 @@ public void atualizarTabela()
             
             //Convertendo o camino relativo da foto para imagem
             ImageIcon imagem = new ImageIcon(proFoto);
+            //Redimensiona a imagem
             Image img = imagem.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
             ImageIcon imagemRedimensionada = new ImageIcon(img);
             
@@ -1001,6 +1008,33 @@ public void atualizarTabela()
                 qtdeLocado
             });
         }
+        jTable2.setRowHeight(55);
+        jTable2.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer(){
+        
+                @Override
+    public Component getTableCellRendererComponent(JTable table, Object value,
+       boolean isSelected, boolean hasFocus, int row, int column) {
+
+        JLabel label = new JLabel();
+
+        // Se for uma imagem, define como ícone
+        if (value instanceof ImageIcon) {
+            label.setIcon((ImageIcon) value);
+        }
+
+        // Centraliza e remove o fundo
+        label.setHorizontalAlignment(JLabel.CENTER);
+        label.setOpaque(false); // <- remove o fundo do label
+
+        // Remove a pintura de seleção (deixa transparente mesmo selecionado)
+        if (isSelected) {
+            label.setBackground(table.getSelectionBackground());
+            label.setForeground(table.getSelectionForeground());
+        }
+
+        return label;
+    }
+});
     }
     
  /*#################################################################################################################### */ 
@@ -1010,11 +1044,31 @@ public void atualizarTabela()
         try{
             Date dataInicio = jDateChooser3.getDate();
             Date dataFinal = jDateChooser4.getDate();
+            if (dataInicio == null || dataFinal == null) {
+            JOptionPane.showMessageDialog(this, "Selecione as duas datas!");
+            return;
+        }
+       Calendar calInicio = Calendar.getInstance();
+        calInicio.setTime(dataInicio);
+        calInicio.set(Calendar.HOUR_OF_DAY, 0);
+        calInicio.set(Calendar.MINUTE, 0);
+        calInicio.set(Calendar.SECOND, 0);
+        calInicio.set(Calendar.MILLISECOND, 0);
+
+        Calendar calFinal = Calendar.getInstance();
+        calFinal.setTime(dataFinal);
+        calFinal.set(Calendar.HOUR_OF_DAY, 23);
+        calFinal.set(Calendar.MINUTE, 59);
+        calFinal.set(Calendar.SECOND, 59);
+        calFinal.set(Calendar.MILLISECOND, 999);
+
+        dataInicio = calInicio.getTime();
+        dataFinal = calFinal.getTime();
             //System.out.println("Data Início: " + dataInicio);
             //System.out.println("Data Final: " + dataFinal);
             //Chamada do método na controller
             List<Object[]> resultados = produtoController.buscarEntreDatas(dataInicio, dataFinal);
-            //System.out.println("Total de linhas retornadas: " + resultados.size());
+            System.out.println("Total de linhas retornadas: " + resultados.size());
             atualizarTabelaEntreDatas(resultados);
         }catch(Exception e){
             JOptionPane.showMessageDialog(this, "Erro ao buscar produtos: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
