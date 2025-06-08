@@ -130,7 +130,9 @@ public class Inicial extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
+          Vendedor vendedor = new Vendedor();
+          vendedor.setVisible(true);
+          this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     //Função do botão para navegar para a página de cliente
