@@ -25,6 +25,51 @@ public class TbVendedorJpaController {
         return emf.createEntityManager();
     }
      
+     
+     //Método CREATE para INSERT de dados
+     public void create(TbVendedor vendedor)
+     {
+         EntityManager em = null;
+         try{
+             em = getEntityManager();
+             em.getTransaction().begin();
+             em.persist(vendedor);
+             em.getTransaction().commit();
+         }catch(Exception ex)
+         {
+             if (em != null && em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+              throw ex;
+         }finally {
+        if (em != null) {
+            em.close();
+        }
+    }
+     }
+     
+     //Método EDIT para dados de vendedor 
+     public void edit(TbVendedor vendedor) throws Exception
+     {
+          EntityManager em = null;
+         try{
+             em = getEntityManager();
+            em.getTransaction().begin();
+            vendedor = em.merge(vendedor);
+            em.getTransaction().commit();
+         }catch(Exception ex){
+              if(em != null && em.getTransaction().isActive())
+            {
+                em.getTransaction().rollback();
+            }
+            throw ex;
+         }finally{
+            if(em != null)
+            {
+                em.close();
+        }
+     }
+     }
          // Método para retornar todos os Vendedores
     public List<TbVendedor> findTbVendedorEntities() {
         EntityManager em = getEntityManager();
@@ -35,5 +80,15 @@ public class TbVendedorJpaController {
         } finally {
             em.close();
         }
+    }
+    public TbVendedor findTbVendedor(int id)
+    {
+      EntityManager em = getEntityManager();
+        try
+        {
+            return em.find(TbVendedor.class, id);
+        }finally{
+            em.close();
+        } 
     }
 }
