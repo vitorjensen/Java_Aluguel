@@ -136,8 +136,18 @@ public class Vendedor extends javax.swing.JFrame {
         });
 
         jButton3.setText("Deletar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Limpar");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -176,6 +186,11 @@ public class Vendedor extends javax.swing.JFrame {
         jLabel6.setText("Clique duas vezes no cadasto do Vendedor para editar as informações:");
 
         jButton5.setText("Buscar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton6.setText("Voltar");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
@@ -340,7 +355,7 @@ public class Vendedor extends javax.swing.JFrame {
         try{
             if(venNome.equals("") || venEmpresa.equals("") || venEmail.equals("") || venDataCadastro.equals("") )
             {
-                throw new Exception("Preeencha todos os campos!");
+                throw new Exception("Preencha todos os campos!");
             }
             
            TbVendedor vendedor = new TbVendedor(Integer.parseInt(venCodigo), venNome, venEmpresa, venEmail, venDataCadastro);
@@ -376,6 +391,68 @@ public class Vendedor extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jTable1MouseClicked
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+       limpar();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+/*#################################################################################################################### */
+    //Função de DELETE de vendedores.
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        String venCodigo = jTextField1.getText();  //Instanciar um novo objeto ID do tipo String para realizar a exclusão diretamente pelo código
+       try{
+           if(JOptionPane.showConfirmDialog(this, "Deseja realmente remover o cliente de ID: " + venCodigo + " ?") == JOptionPane.OK_OPTION)
+           {
+               controller.destroy(Integer.parseInt(venCodigo));
+               JOptionPane.showMessageDialog(this, "Vendedor de ID: " + venCodigo + " removido com sucesso", "SUCESSO", JOptionPane.INFORMATION_MESSAGE);
+           }
+           limpar();        
+       }catch (Exception e){
+           JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+       }
+    }//GEN-LAST:event_jButton3ActionPerformed
+/*#################################################################################################################### */
+    //Função para buscar na JTable1
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+      String venNome = jTextField5.getText(); //Definindo que vou realizar a busca pelo nome do Vendedor
+      boolean encontrou = false;
+      try{
+          if(venNome.equals(""))
+          {
+              throw new Exception("Preencha o campo antes de realizar a pesquisa!");
+          }
+          int n = ((DefaultTableModel) jTable1.getModel()).getRowCount(); //Pega a contagem de linhas da JTable e aramzena em N
+          
+          for (int i = 0; i < n; i++)
+          {
+              String celula = ((DefaultTableModel) jTable1.getModel()).getValueAt(i, 1).toString();
+                 //Ao armazenar na célula alguma string, é necessário verificar a existencia da pesquisa desejada
+                 if(celula.toLowerCase().contains(venNome.toLowerCase()))//Método (indexOf()) que mostrará o indice da primeira ocorrência (Substring) da palavra a ser buscada dentro de Celula
+                 {
+                  jTable1.setRowSelectionInterval(i, i);
+                  jTextField1.setText(((DefaultTableModel) jTable1.getModel()).getValueAt(i, 0).toString());
+                  jTextField2.setText(((DefaultTableModel) jTable1.getModel()).getValueAt(i, 1).toString());
+                  jTextField3.setText(((DefaultTableModel) jTable1.getModel()).getValueAt(i, 2).toString());
+                  jTextField4.setText(((DefaultTableModel) jTable1.getModel()).getValueAt(i, 3).toString());
+                  SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                  Date dataCadastro = formato.parse(jTable1.getValueAt(i, 4).toString());
+                  jDateChooser1.setDate(dataCadastro);
+                  jButton2.setEnabled(true);
+                  jButton3.setEnabled(true);
+                  jButton1.setEnabled(false);
+                  encontrou = true;
+                  break;
+                 }
+              }
+          if(!encontrou){
+               limpar();
+               throw new Exception("Nome do cliente não encontrado!");
+           }
+      }
+      catch (Exception e){
+           JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+       }
+    }//GEN-LAST:event_jButton5ActionPerformed
     
     
 /*#################################################################################################################### */

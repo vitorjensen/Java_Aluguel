@@ -411,7 +411,7 @@ public class Cliente extends javax.swing.JFrame {
         if(cliNome.equals("") || cliTelefone.equals("") || cliCpf.equals("") || cliRua.equals("") || cliNumero.equals("") || 
                 cliBairro.equals("") || cliCidade.equals("") || cliEstado.equals("") || cliComplemento.equals(""))
         {
-            throw new Exception("Preeencha todos os campos!");
+            throw new Exception("Preencha todos os campos!");
         }
 
         TbCliente cliente = new TbCliente(cliNome, cliTelefone, cliCpf, cliRua, cliNumero, cliBairro, cliCidade, cliEstado, cliComplemento );

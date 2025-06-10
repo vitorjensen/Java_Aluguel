@@ -9,6 +9,7 @@ import java_aluguel.entities.TbVendedor;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.EntityNotFoundException;
 
 /**
  *
@@ -70,6 +71,27 @@ public class TbVendedorJpaController {
         }
      }
      }
+    public void destroy(Integer VenCodigo) throws Exception{
+        EntityManager em = null;
+        try{
+            em = getEntityManager();
+            em.getTransaction().begin();
+            TbVendedor vendedor;
+            try{
+                vendedor = em.getReference(TbVendedor.class, VenCodigo);
+                vendedor.getVenCodigo();
+            }catch (EntityNotFoundException enfe){
+                throw new Exception("Cliente com ID: " + VenCodigo + " não encontrado.", enfe);
+            }
+            em.remove(vendedor);
+            em.getTransaction().commit();
+        }finally{
+            if(em != null)
+            {
+                em.close();
+            }
+        }
+    }
          // Método para retornar todos os Vendedores
     public List<TbVendedor> findTbVendedorEntities() {
         EntityManager em = getEntityManager();
