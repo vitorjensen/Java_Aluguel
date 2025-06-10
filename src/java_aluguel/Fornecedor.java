@@ -3,20 +3,96 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package java_aluguel;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java_aluguel.controllers.TbFornecedorJpaController;
+import java_aluguel.entities.TbFornecedor;
+import javax.persistence.Persistence;
+import javax.persistence.EntityManagerFactory;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author vitor
  */
 public class Fornecedor extends javax.swing.JFrame {
 
+    //Fazendo a conexão com o banco de dados após a configuração do JPA
+    EntityManagerFactory factory = Persistence.createEntityManagerFactory("Java_AluguelPU2");
+    TbFornecedorJpaController controller = new TbFornecedorJpaController(factory);
+    
     /**
      * Creates new form Fornecedor
      */
     public Fornecedor() {
         initComponents();
+        abrirConexao();
+        atualizarTabela();
+        limpar();
     }
-
+/*#################################################################################################################### */
+    //Função para limpar os inputs
+    private void limpar()
+    {
+         jTextField1.setText("");
+         jComboBox1.setSelectedItem(null);
+         jTextField3.setText("");
+         jTextField4.setText("");
+         jTextField5.setText("");
+         jTextField6.setText("");
+         jTextField7.setText("");
+         jTextField8.setText("");
+         jComboBox2.setSelectedItem(null);
+         jTextField10.setText("");
+         jDateChooser1.setDate(null);
+         jButton2.setEnabled(true);
+         jButton3.setEnabled(false);
+         jButton4.setEnabled(false);
+         jButton5.setEnabled(true);
+        jComboBox1.requestFocus();
+    }
+/*#################################################################################################################### */
+        //Abrindo a conexão para fazer tratamento de erro caso haja falha na conexão
+    private void abrirConexao()
+    {
+        try{
+            controller = new TbFornecedorJpaController(factory);
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+/*#################################################################################################################### */
+  //novo código de atualizarTabela() para puxar os dados do banco utilizando o JPA 
+    private void atualizarTabela()
+    {
+      ((DefaultTableModel) jTable1.getModel()).setRowCount(0);
+         try{
+             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+             List<TbFornecedor> fornecedores = controller.findTbFornecedorEntities();
+             for(TbFornecedor fornecedor : fornecedores)
+             {
+                 String linha[] = {
+                   String.valueOf(fornecedor.getForCodigo()), //Sintaxe para converter INT para string
+                     fornecedor.getForPessoa(),
+                     fornecedor.getForCnpj(),
+                     fornecedor.getForRazao(),
+                     fornecedor.getForFantasia(),
+                     fornecedor.getForEndereco(),
+                     fornecedor.getForNumero(),
+                     fornecedor.getForCidade(),
+                     fornecedor.getForEstado(),
+                     fornecedor.getForTelefone(),
+                     sdf.format(fornecedor.getForDataCadastro())
+                 };
+                ((DefaultTableModel) jTable1.getModel()).addRow(linha);
+             }
+         }catch(Exception e)
+         {
+             JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+         }
+    }
+/*#################################################################################################################### */
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -33,7 +109,6 @@ public class Fornecedor extends javax.swing.JFrame {
         jTextField6 = new javax.swing.JTextField();
         jTextField7 = new javax.swing.JTextField();
         jTextField8 = new javax.swing.JTextField();
-        jTextField9 = new javax.swing.JTextField();
         jTextField10 = new javax.swing.JTextField();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
         jComboBox1 = new javax.swing.JComboBox<>();
@@ -59,12 +134,13 @@ public class Fornecedor extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel13 = new javax.swing.JLabel();
+        jComboBox2 = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jTextField1.setEnabled(false);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Fisica", "Jurídica" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione...", "Fisica", "Jurídica" }));
 
         jLabel1.setText("ID:");
 
@@ -89,18 +165,48 @@ public class Fornecedor extends javax.swing.JFrame {
         jLabel11.setText("Data de cadastro:");
 
         jButton1.setText("Voltar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Adicionar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Editar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Deletar");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setText("Limpar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jLabel12.setText("Clique duas vezes no cadastro do forncecedor para editar suas informações: ");
 
         jButton6.setText("Buscar");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -121,9 +227,16 @@ public class Fornecedor extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jLabel13.setText("Novo fornecedor:");
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione...", "AC", "AL", "AP", "AM", "BA", "CE", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO", "DF" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -153,9 +266,9 @@ public class Fornecedor extends javax.swing.JFrame {
                                     .addComponent(jTextField8, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
                                     .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextField9, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
-                                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
@@ -199,11 +312,11 @@ public class Fornecedor extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jLabel13))
-                .addGap(18, 18, 18)
+                .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
@@ -229,8 +342,8 @@ public class Fornecedor extends javax.swing.JFrame {
                     .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel11)
                 .addGap(4, 4, 4)
@@ -254,6 +367,183 @@ public class Fornecedor extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+          //Instanciando a tela de cliente para ser reconhecida
+       Inicial inicial = new Inicial();
+       inicial.setVisible(true); //Define TRUE para a tela de cliente ser exibida
+       this.dispose(); //Fecha a tela atual para ao abrir um nova
+    }//GEN-LAST:event_jButton1ActionPerformed
+/*#################################################################################################################### */
+    //Botão de INSERT de fornecedores
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+      String forPessoa = jComboBox1.getSelectedItem().toString();
+      String forCnpj = jTextField3.getText();
+      String forRazao = jTextField4.getText();
+      String forFantasia = jTextField5.getText();
+      String forEndereco = jTextField6.getText();
+      String forNumero = jTextField7.getText();
+      String forCidade = jTextField8.getText();
+      String forEstado = jComboBox2.getSelectedItem().toString();
+      String forTelefone = jTextField10.getText();
+      Date forDataCadastro = jDateChooser1.getDate();
+      try{
+        if(forPessoa.equals("") || forCnpj.equals("") || forRazao.equals("") || forFantasia.equals("") || forEndereco.equals("") || 
+                forNumero.equals("") || forCidade.equals("") || forEstado.equals("") || forTelefone.equals("") || forDataCadastro.equals(""))
+        {
+            throw new Exception("Preencha todos os campos!");
+        }
+
+        TbFornecedor fornecedor = new TbFornecedor();
+        fornecedor.setForPessoa(forPessoa);
+        fornecedor.setForCnpj(forCnpj);
+        fornecedor.setForRazao(forRazao);
+        fornecedor.setForFantasia(forFantasia);
+        fornecedor.setForEndereco(forEndereco);
+        fornecedor.setForNumero(forNumero);
+        fornecedor.setForCidade(forCidade);
+        fornecedor.setForEstado(forEstado);
+        fornecedor.setForTelefone(forTelefone);
+        fornecedor.setForDataCadastro(forDataCadastro);
+        controller.create(fornecedor);
+        limpar();
+           JOptionPane.showMessageDialog(this, "Fornecedor " + forRazao + " cadastrado com sucesso", "SUCESSO", JOptionPane.INFORMATION_MESSAGE);
+      }catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+        } 
+    }//GEN-LAST:event_jButton2ActionPerformed
+/*#################################################################################################################### */
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        limpar();
+    }//GEN-LAST:event_jButton5ActionPerformed
+/*#################################################################################################################### */
+    //Função para pegar o duplo clique do mouse sobre a JTable
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+          if(evt.getClickCount() == 2)
+        {
+            try{
+                
+            
+            int i = jTable1.getSelectedRow();
+             SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+            jTextField1.setText(((DefaultTableModel) jTable1.getModel()) .getValueAt(i, 0) .toString());
+            String forPessoa = jTable1.getValueAt(i, 1).toString();
+            jComboBox1.setSelectedItem(forPessoa);
+            jTextField3.setText(((DefaultTableModel) jTable1.getModel()) .getValueAt(i, 2) .toString());
+            jTextField4.setText(((DefaultTableModel)jTable1.getModel()) .getValueAt(i, 3) .toString());
+            jTextField5.setText(((DefaultTableModel) jTable1.getModel()) .getValueAt(i, 4) .toString());
+            jTextField6.setText(((DefaultTableModel) jTable1.getModel()) .getValueAt(i, 5) .toString());
+            jTextField7.setText(((DefaultTableModel) jTable1.getModel()) .getValueAt(i, 6) .toString());
+            jTextField8.setText(((DefaultTableModel) jTable1.getModel()) .getValueAt(i, 7) .toString());
+            String forEstado = jTable1.getValueAt(i, 8).toString();
+            jComboBox2.setSelectedItem(forEstado);
+            jTextField10.setText(((DefaultTableModel) jTable1.getModel()).getValueAt(i, 9) .toString());
+            Date dataCadastro = formato.parse(jTable1.getValueAt(i, 10).toString());
+            jDateChooser1.setDate(dataCadastro);
+            jButton2.setEnabled(false);
+            jButton3.setEnabled(true);
+            jButton4.setEnabled(true);
+            jButton5.setEnabled(true);
+            }catch(Exception e)
+            {
+                 JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
+/*#################################################################################################################### */
+    //Função para realizar o EDIT das informações
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+      String forCodigo = jTextField1.getText();
+      String forPessoa = jComboBox1.getSelectedItem().toString();
+      String forCnpj = jTextField3.getText();
+      String forRazao = jTextField4.getText();
+      String forFantasia = jTextField5.getText();
+      String forEndereco = jTextField6.getText();
+      String forNumero = jTextField7.getText();
+      String forCidade = jTextField8.getText();
+      String forEstado = jComboBox2.getSelectedItem().toString();
+      String forTelefone = jTextField10.getText();
+      Date forDataCadastro = jDateChooser1.getDate();
+      try{
+        if(forPessoa.equals("") || forCnpj.equals("") || forRazao.equals("") || forFantasia.equals("") || forEndereco.equals("") || 
+                forNumero.equals("") || forCidade.equals("") || forEstado.equals("") || forTelefone.equals("") || forDataCadastro.equals(""))
+        {
+            throw new Exception("Preencha todos os campos!");
+        }
+
+        TbFornecedor fornecedor = new TbFornecedor(Integer.parseInt(forCodigo), forPessoa, forCnpj, forRazao, 
+                forFantasia, forEndereco, forNumero, forCidade, forEstado, forTelefone, forDataCadastro);
+        controller.edit(fornecedor);
+        limpar();
+           JOptionPane.showMessageDialog(this, "ID de fornecedor: " + forCodigo  + " alterado com sucesso", "SUCESSO", JOptionPane.INFORMATION_MESSAGE);
+      }catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+        } 
+    }//GEN-LAST:event_jButton3ActionPerformed
+/*#################################################################################################################### */
+    //Função de DELETE para o botão
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        String forCodigo = jTextField1.getText();  //Instanciar um novo objeto ID do tipo String para realizar a exclusão diretamente pelo código
+       try{
+           if(JOptionPane.showConfirmDialog(this, "Deseja realmente remover o fornecedor de ID: " + forCodigo + " ?") == JOptionPane.OK_OPTION)
+           {
+               controller.destroy(Integer.parseInt(forCodigo));
+               JOptionPane.showMessageDialog(this, "Cliente de ID: " + forCodigo + " removido com sucesso", "SUCESSO", JOptionPane.INFORMATION_MESSAGE);
+           }
+           limpar();        
+       }catch (Exception e){
+           JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+       }
+    }//GEN-LAST:event_jButton4ActionPerformed
+/*#################################################################################################################### */
+    //Função para Buscar os registro na jTable
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+       String forFantasia = jTextField2.getText();
+       boolean encontrou = false;
+       try{
+           if(forFantasia.equals(""))
+           {
+               throw new Exception("Preencha o campo antes de realizar a pesquisa!");
+           }
+           int n = ((DefaultTableModel) jTable1.getModel()).getRowCount(); //Pega a contagem de linhas da JTable e aramzena em N
+           for(int i = 0; i < n; i++)
+           {
+               String celula = ((DefaultTableModel) jTable1.getModel()).getValueAt(i, 1).toString();
+               //Ao armazenar na célula alguma string, é necessário verificar a existencia da pesquisa desejada
+               if(celula.toLowerCase().contains(forFantasia.toLowerCase()))//Método (indexOf()) que mostrará o indice da primeira ocorrência (Substring) da palavra a ser buscada dentro de Celula
+               {
+                   //Se o index corresponder a algum valor (>=0) preencher os campos do formulário com as informações
+                  jTable1.setRowSelectionInterval(i, i);
+                  jTextField1.setText(((DefaultTableModel) jTable1.getModel()).getValueAt(i, 0).toString());
+                  String forPessoa = jTable1.getValueAt(i, 1).toString();
+                  jComboBox1.setSelectedItem(forPessoa);
+                  jTextField3.setText(((DefaultTableModel) jTable1.getModel()).getValueAt(i, 2).toString());
+                  jTextField4.setText(((DefaultTableModel) jTable1.getModel()).getValueAt(i, 3).toString());
+                  jTextField5.setText(((DefaultTableModel) jTable1.getModel()).getValueAt(i, 4).toString());
+                  jTextField6.setText(((DefaultTableModel) jTable1.getModel()).getValueAt(i, 5).toString());
+                  jTextField7.setText(((DefaultTableModel) jTable1.getModel()).getValueAt(i, 6).toString());
+                  jTextField8.setText(((DefaultTableModel) jTable1.getModel()).getValueAt(i, 7).toString());
+                  String forEstado = jTable1.getValueAt(i, 8).toString();
+                  jComboBox1.setSelectedItem(forEstado);
+                  jTextField10.setText(((DefaultTableModel) jTable1.getModel()).getValueAt(i, 9).toString());
+                  jButton2.setEnabled(false);
+                  jButton3.setEnabled(true);
+                  jButton4.setEnabled(true);
+                  jButton5.setEnabled(true);
+                  encontrou = true;
+                  break;
+               }
+           }
+            if(!encontrou){
+               limpar();
+               throw new Exception("Nome do cliente não encontrado!");
+           }
+       }catch (Exception e){
+           JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+       }
+    }//GEN-LAST:event_jButton6ActionPerformed
+/*#################################################################################################################### */
     /**
      * @param args the command line arguments
      */
@@ -297,6 +587,7 @@ public class Fornecedor extends javax.swing.JFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -322,6 +613,5 @@ public class Fornecedor extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
-    private javax.swing.JTextField jTextField9;
     // End of variables declaration//GEN-END:variables
 }
