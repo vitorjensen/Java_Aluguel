@@ -183,7 +183,7 @@ public class Vendedor extends javax.swing.JFrame {
         }
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel6.setText("Clique duas vezes no cadasto do Vendedor para editar as informações:");
+        jLabel6.setText("Clique duas vezes no cadasto do Vendedor para editar suas informações:");
 
         jButton5.setText("Buscar");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
@@ -242,7 +242,7 @@ public class Vendedor extends javax.swing.JFrame {
                                 .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton5)))
-                        .addGap(0, 304, Short.MAX_VALUE)))
+                        .addGap(0, 291, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(

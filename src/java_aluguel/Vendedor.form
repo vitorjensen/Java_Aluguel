@@ -68,7 +68,7 @@
                               <Component id="jButton5" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace min="0" pref="304" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="291" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -257,7 +257,7 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Segoe UI" size="12" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Clique duas vezes no cadasto do Vendedor para editar as informa&#xe7;&#xf5;es:"/>
+        <Property name="text" type="java.lang.String" value="Clique duas vezes no cadasto do Vendedor para editar suas informa&#xe7;&#xf5;es:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField5">

@@ -206,7 +206,7 @@ public class Cliente extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("Remover");
+        jButton3.setText("Deletar");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
