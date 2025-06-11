@@ -8,6 +8,7 @@ import java.util.List;
 import java_aluguel.entities.TbProduto;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import static javax.swing.UIManager.get;
@@ -48,6 +49,53 @@ public class TbProdutoJpaController {
     }
      }
      
+      //Função para INSERT na base de dados de aluguel
+     public void create(TbProduto produto)
+     {
+         EntityManager em = null;
+         try
+         {
+             em = getEntityManager();
+             em.getTransaction().begin();
+             em.persist(produto);
+             em.getTransaction().commit();
+         }catch(Exception ex){
+             if(em != null && em.getTransaction().isActive())
+             {
+                 em.getTransaction().rollback();
+             }
+             throw ex;
+         }finally
+         {
+             if(em != null)
+             {
+                 em.close();
+             }
+         }
+         
+     }
+     //Criando método na controller para realizar o "destroy"
+    public void destroy(Integer ProCodigo) throws Exception{
+        EntityManager em = null;
+        try{
+            em = getEntityManager();
+            em.getTransaction().begin();
+            TbProduto produto;
+            try{
+                produto = em.getReference(TbProduto.class, ProCodigo);
+                produto.getProCodigo();
+            }catch (EntityNotFoundException enfe){
+                throw new Exception("Cliente com ID: " + ProCodigo + " não encontrado.", enfe);
+            }
+            em.remove(produto);
+            em.getTransaction().commit();
+        }finally{
+            if(em != null)
+            {
+                em.close();
+            }
+        }
+    }
      //Função para trazer o relacionamento entre TbAluguel e TbProduto (ID, Descrição...)
       public TbProduto findTbProduto(int id)
     {

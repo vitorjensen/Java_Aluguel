@@ -4,19 +4,121 @@
  */
 package java_aluguel;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java_aluguel.controllers.TbProdutoJpaController;
+import java.util.List;
+import java.util.Locale;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.swing.JOptionPane;
+import java_aluguel.entities.TbProduto;
+import java_aluguel.entities.TbFornecedor;
+import java_aluguel.controllers.TbFornecedorJpaController;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author vitor
  */
 public class Produto extends javax.swing.JFrame {
-
+/*#################################################################################################################### */
+//Fazendo a conexão via JPA com o banco
+    EntityManagerFactory factory = Persistence.createEntityManagerFactory("Java_AluguelPU2");
+    TbProdutoJpaController controller = new TbProdutoJpaController(factory);
+     private EntityManagerFactory emf;
+     private TbFornecedorJpaController fornecedorController;
+    
     /**
      * Creates new form Produto
      */
     public Produto() {
+        emf = Persistence.createEntityManagerFactory("Java_AluguelPU2"); // Substitua "SeuPU" pelo nome correto do persistence.xm
+        fornecedorController = new TbFornecedorJpaController(emf);
         initComponents();
+        abrirConexao();
+        atualizarTabela();
+        carregarFornecedores();
+        limpar();
     }
+    private void limpar()
+    {
+        jTextField1.setText("");
+        jTextField2.setText("");
+        jComboBox1.setSelectedItem(null);
+        jTextField3.setText("");
+        jTextField4.setText("");
+        jTextField5.setText("");
+        jTextField6.setText("");
+        jTextField7.setText("");
+        jComboBox2.setSelectedItem(null);
+        jComboBox6.setSelectedItem(null);
+        jTextField8.setText("");
+        jTextField10.setText("");
+        jComboBox3.setSelectedItem(null);
+        jComboBox5.setSelectedItem(null);
+        jDateChooser1.setDate(null);
+        jComboBox7.setSelectedItem(null);
+        atualizarTabela();
+         jButton2.setEnabled(true);
+        jButton3.setEnabled(false);
+        jButton4.setEnabled(false);
+        jButton5.setEnabled(true);
+        jTextField2.requestFocus();
+    }
+//Abrindo a conexão e fazendo o tratamento de erro caso não ocorra a conexão
+    private void abrirConexao()
+    {
+        try{
+           controller = new TbProdutoJpaController(factory);
+        
+        }catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+        }
+        
+    }
+    
+     //novo código de atualizarTabela() para puxar os dados do banco utilizando o JPA  
+  private void atualizarTabela()
+    {
+        ((DefaultTableModel) jTable1.getModel()).setRowCount(0);
+        try{
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        List<TbProduto> produtos = controller.findTbProdutoEntities();
+        for(TbProduto produto : produtos)
+        {
+        String linha[] = { 
+        String.valueOf(produto.getProCodigo()), //sintaxe para converter INT em String
+        produto.getProFoto(),
+        produto.getForFantasia(),
+        produto.getProDescricao(),
+        produto.getProDescricaoAdd(),
+        nf.format(produto.getProCusto()),
+        String.valueOf(produto.getProIndice()),
+        nf.format(produto.getProValor()),
+        produto.getProTamanho(),
+        produto.getProAluguel(),
+        String.valueOf(produto.getProQtde()),
+        produto.getProCor(),
+        produto.getProStatus(),
+        produto.getProTipo(),
+        sdf.format(produto.getProDataCadastro())
+        };
+        ((DefaultTableModel) jTable1.getModel()).addRow(linha);
 
+        }
+       
+        
+        }catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+/*#################################################################################################################### */
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -66,16 +168,18 @@ public class Produto extends javax.swing.JFrame {
         jButton6 = new javax.swing.JButton();
         jComboBox6 = new javax.swing.JComboBox<>();
         jLabel13 = new javax.swing.JLabel();
+        jComboBox7 = new javax.swing.JComboBox<>();
+        jLabel18 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jTextField1.setEnabled(false);
 
         jLabel1.setText("ID:");
 
         jLabel2.setText("Foto do produto:");
 
         jLabel3.setText("Nome fantasia:");
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel4.setText("Descrição do produto:");
 
@@ -100,16 +204,36 @@ public class Produto extends javax.swing.JFrame {
         jLabel15.setText("Data de cadastro:");
 
         jButton1.setText("Voltar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel16.setText("Novo produto");
 
         jButton2.setText("Adicionar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Editar");
 
         jButton4.setText("Remover");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setText("Limpar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -130,6 +254,11 @@ public class Produto extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione...", "36", "38", "40", "42", "44", "46", "48", "50", "52", "PP", "P", "M", "G", "GG", "UN" }));
@@ -144,6 +273,10 @@ public class Produto extends javax.swing.JFrame {
         jButton6.setText("Buscar");
 
         jComboBox6.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione...", "SIM", "NÃO", " " }));
+
+        jComboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione...", "ATIVO" }));
+
+        jLabel18.setText("Status:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -237,8 +370,14 @@ public class Produto extends javax.swing.JFrame {
                                                         .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                         .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jButton6)))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jButton6))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(12, 12, 12)
+                                                .addComponent(jLabel18))))
+                                    .addComponent(jComboBox7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 75, Short.MAX_VALUE)))
@@ -286,14 +425,16 @@ public class Produto extends javax.swing.JFrame {
                             .addComponent(jLabel11)
                             .addComponent(jLabel12)
                             .addComponent(jLabel14)
-                            .addComponent(jLabel15))
+                            .addComponent(jLabel15)
+                            .addComponent(jLabel18))
                         .addGap(4, 4, 4)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBox7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(27, 27, 27)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton2)
@@ -315,7 +456,130 @@ public class Produto extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+//Função para realizar o INSERT de dados de produto
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+   try{       
+            String proFoto = jTextField2.getText();
+            //Obtendo o fornecedor selecionado
+            String forFantasia = jComboBox1.getSelectedItem().toString();
+            //Fim
+            String proDescricao = jTextField3.getText();
+            String proDescricaoAdd = jTextField4.getText();
+            BigDecimal proCusto = new BigDecimal(jTextField5.getText().replace(",", "."));
+            int proIndice = Integer.parseInt(jTextField6.getText());
+            BigDecimal proValor = new BigDecimal(jTextField7.getText().replace(",", "."));
+            String proTamanho = jComboBox2.getSelectedItem().toString();
+            String proAluguel = jComboBox6.getSelectedItem().toString();
+            int proQtde = Integer.parseInt(jTextField10.getText());
+            String proCor = jComboBox3.getSelectedItem().toString();
+            String proTipo = jComboBox5.getSelectedItem().toString();
+            Date proDataCadastro = jDateChooser1.getDate();
+            String proStatus = jComboBox7.getSelectedItem().toString();
+     
+            
+            TbProduto produto = new TbProduto();
+            produto.setProFoto(proFoto);
+            produto.setForFantasia(forFantasia);
+            produto.setProDescricao(proDescricao);
+            produto.setProDescricaoAdd(proDescricaoAdd);
+            produto.setProCusto(proCusto);
+            produto.setProIndice(proIndice);
+            produto.setProValor(proValor);
+            produto.setProTamanho(proTamanho);
+            produto.setProAluguel(proAluguel);
+            produto.setProQtde(proQtde);
+            produto.setProCor(proCor);
+            produto.setProTipo(proTipo);
+            produto.setProDataCadastro(proDataCadastro);
+            produto.setProStatus(proStatus);
+            controller.create(produto);
+            limpar();
+            JOptionPane.showMessageDialog(this, "Produto" + proDescricao + " cadastrado com sucesso", "SUCESSO", JOptionPane.INFORMATION_MESSAGE);
+        }catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+        } 
+    }//GEN-LAST:event_jButton2ActionPerformed
+/*#################################################################################################################### */
+    //Função do botão limpar
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        limpar();
+    }//GEN-LAST:event_jButton5ActionPerformed
+/*#################################################################################################################### */
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+         //Instanciando a tela de cliente para ser reconhecida
+       Inicial inicial = new Inicial();
+       inicial.setVisible(true); //Define TRUE para a tela de cliente ser exibida
+       this.dispose(); //Fecha a tela atual para ao abrir um nova
+    }//GEN-LAST:event_jButton1ActionPerformed
+/*#################################################################################################################### */
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // Função para realizar o DELETE
+         String proCodigo = jTextField1.getText();  //Instanciar um novo objeto ID do tipo String para realizar a exclusão diretamente pelo código
+       try{
+           if(JOptionPane.showConfirmDialog(this, "Deseja realmente remover o produto de ID: " + proCodigo + " ?") == JOptionPane.OK_OPTION)
+           {
+               controller.destroy(Integer.parseInt(proCodigo));
+               JOptionPane.showMessageDialog(this, "Produto de ID: " + proCodigo + " removido com sucesso", "SUCESSO", JOptionPane.INFORMATION_MESSAGE);
+           }
+           limpar();        
+       }catch (Exception e){
+           JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+       }
+    }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        if(evt.getClickCount() == 2)
+        {
+            try{
+                int i = jTable1.getSelectedRow();
+                 SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                 Date dataCadastro = formato.parse(jTable1.getValueAt(i, 14).toString());
+                 jDateChooser1.setDate(dataCadastro);
+                  jTextField1.setText(jTable1.getValueAt(i, 0).toString());
+                  jTextField2.setText(jTable1.getValueAt(i, 1).toString());
+                  String fantasia = jTable1.getValueAt(i, 2).toString();
+                  jComboBox1.setSelectedItem(fantasia);
+                  jTextField3.setText(jTable1.getValueAt(i, 3).toString());
+                  jTextField4.setText(jTable1.getValueAt(i, 4).toString());
+                  jTextField5.setText(jTable1.getValueAt(i, 5).toString());
+                  jTextField6.setText(jTable1.getValueAt(i, 6).toString());
+                  jTextField7.setText(jTable1.getValueAt(i, 7).toString());
+                  String tamanho = jTable1.getValueAt(i, 8).toString();
+                  jComboBox2.setSelectedItem(tamanho);
+                  String paraAluguel = jTable1.getValueAt(i, 9).toString();
+                  jComboBox6.setSelectedItem(paraAluguel);
+                  jTextField10.setText(jTable1.getValueAt(i, 10).toString());
+                  String cor = jTable1.getValueAt(i, 11).toString();
+                  jComboBox3.setSelectedItem(cor);
+                  String tipo = jTable1.getValueAt(i, 13).toString();
+                  jComboBox5.setSelectedItem(tipo);
+                  String status = jTable1.getValueAt(i, 12).toString();
+                  jComboBox7.setSelectedItem(status);
+                  
+            jButton2.setEnabled(false);
+            jButton3.setEnabled(true);
+            jButton4.setEnabled(true);
+            jButton5.setEnabled(true);
+            }catch(Exception e){
+            JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+        }
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
+/*#################################################################################################################### */
+    
+    private void carregarFornecedores()
+    {
+        TbFornecedorJpaController fornecedorController = new TbFornecedorJpaController(Persistence.createEntityManagerFactory("Java_AluguelPU2"));
+        List<TbFornecedor> listaFornecedor = fornecedorController.findTbFornecedorEntities();
+        jComboBox1.removeAllItems();
+        jComboBox1.addItem(new FornecedorComboBox("Selecione..."));
+        for(TbFornecedor fornecedor : listaFornecedor)
+        {
+            jComboBox1.addItem(new FornecedorComboBox(fornecedor.getForFantasia()));
+        }
+    }
+/*#################################################################################################################### */
     /**
      * @param args the command line arguments
      */
@@ -358,11 +622,12 @@ public class Produto extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<FornecedorComboBox> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JComboBox<String> jComboBox5;
     private javax.swing.JComboBox<String> jComboBox6;
+    private javax.swing.JComboBox<String> jComboBox7;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -373,6 +638,7 @@ public class Produto extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
